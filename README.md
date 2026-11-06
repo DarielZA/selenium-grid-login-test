@@ -38,11 +38,12 @@ The Grid ready check is needed because the test can start before the Chrome node
 
 ## Test status
 
-- Verified: the test passes with a valid login and fails with exit code 1 with an invalid user, using local Chrome and a Selenium Grid 4.17.0 server.
-- Not yet verified: the exact Docker Compose setup in this repo. A GitHub Actions workflow to run it is planned and has not been added yet.
+- The Docker Compose setup and login test passed in GitHub Actions. See this [recorded passing run](https://github.com/DarielZA/selenium-grid-demo/actions/runs/42150366176). Check the Actions tab for newer results.
+- Failure handling was also checked with an invalid username using local Chrome and a Selenium Grid 4.17.0 server: the test exits with code 1. The CI workflow currently runs only the valid-login scenario.
 
-## Limits
+## Limits and safety
 
-- One scenario against a public demo site, so the run depends on that site being available.
-- The Grid is meant for local use.
-
+- This is one login scenario against a public demo site, not a full test suite. Runs depend on that site being available.
+- The Grid has no authentication. The Compose file publishes port 4444 on 127.0.0.1 only and does not publish the VNC port. Keep these restrictions; do not expose the Grid to the internet.
+- Use Docker Engine 28 or newer. Older versions have a documented issue that can let other devices on the same network reach ports published to localhost. See [Docker's port-publishing guidance](https://docs.docker.com/engine/network/port-publishing/).
+- Software running on the same computer can still connect to the Grid. Stop the containers with docker compose down when finished.

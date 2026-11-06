@@ -30,6 +30,7 @@ const { getDriver } = require('../config/webdriver-simple-config');
     console.log('✅ Login exitoso - prueba pasada');
   } catch (error) {
     console.error('❌ Error en la prueba:', error);
+    process.exitCode = 1;
   } finally {
     await driver.quit();
   }

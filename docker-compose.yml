@@ -5,7 +5,7 @@ services:
     image: selenium/hub:4.17.0
     container_name: selenium-hub
     ports:
-      - "4444:4444"
+      - "127.0.0.1:4444:4444"
 
   selenium-chrome:
     image: selenium/node-chrome:4.17.0
@@ -13,8 +13,7 @@ services:
     shm_size: 2gb
     depends_on:
       - selenium-hub
-    ports:
-      - "5900:5900"
+
     environment:
       - SE_EVENT_BUS_HOST=selenium-hub
       - SE_EVENT_BUS_PUBLISH_PORT=4442

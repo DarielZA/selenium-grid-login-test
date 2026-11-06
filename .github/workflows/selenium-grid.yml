@@ -1,0 +1,45 @@
+name: Selenium Grid login test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  grid-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start Selenium Grid (Docker Compose)
+        run: docker compose up -d
+
+      - name: Wait for the Chrome node to register
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:4444/status | jq -e '.value.nodes[0].availability == "UP"' > /dev/null; then
+              echo "Grid is ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Grid did not become ready in time"
+          docker compose logs
+          exit 1
+
+      - name: Run login test
+        run: npm test
+
+      - name: Show Grid logs and stop
+        if: always()
+        run: |
+          docker compose logs
+          docker compose down
